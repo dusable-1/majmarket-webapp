@@ -19,7 +19,7 @@
     .app{min-height:100vh;display:flex;flex-direction:column}
     .container{max-width:980px;margin:0 auto;padding:16px 16px 96px}
 
-    /* ====== TON-style ====== */
+    /* ===== look & feel ===== */
     .hero{
       background:
         radial-gradient(140% 140% at 20% 0%, rgba(233,62,143,.25) 0%, rgba(233,62,143,.07) 38%, rgba(17,17,23,1) 62%),
@@ -31,15 +31,11 @@
       width:34px;height:34px;border-radius:11px;background:#1b1b22;
       display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent)
     }
-    .pill{display:inline-flex;gap:6px;padding:6px;border:1px solid var(--line);background:#0f0f14;border-radius:14px}
-    .pill button{background:transparent;border:0;color:#CFCFDE;padding:6px 10px;border-radius:10px;font-weight:700;cursor:pointer}
-    .pill button.active{background:#1b1b22;color:#fff}
-
     .balance{display:flex;align-items:baseline;gap:10px;margin:10px 0 12px}
     .amount{font-size:30px;font-weight:800;letter-spacing:.2px}
     .sub{color:var(--muted);font-size:13px}
 
-    .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+    .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
     .tile{
       display:flex;flex-direction:column;align-items:center;gap:8px;
       background:#111117;border:1px solid var(--line);border-radius:16px;padding:12px;cursor:pointer;user-select:none
@@ -64,16 +60,24 @@
     }
     label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
 
-    /* каталог */
     .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
     .product{background:#0f0f14;border:1px solid var(--line);border-radius:16px;padding:14px}
     .product h4{margin:0 0 6px}
 
-    /* таб-бар */
-    .tabbar{position:fixed;left:0;right:0;bottom:0;background:#0B0B0F;border-top:1px solid var(--line);display:flex}
-    .tabbar button{flex:1;background:transparent;border:0;color:#CFCFDE;padding:12px 8px;font-weight:800}
-    .tabbar button.active{color:#fff;border-top:2px solid var(--accent)}
+    /* ===== tabbar (TON-like) ===== */
+    .tabbar{
+      position:fixed;left:0;right:0;bottom:0;background:#0B0B0F;
+      border-top:1px solid var(--line);display:flex;padding:6px 4px
+    }
+    .tabbar .item{
+      flex:1;background:transparent;border:0;color:#CFCFDE;
+      display:flex;flex-direction:column;align-items:center;gap:4px;
+      padding:8px 4px 10px;font-weight:800
+    }
+    .tabbar .item .ico{font-size:22px;line-height:1}
+    .tabbar .item .lbl{font-size:12px}
+    .tabbar .item.active{color:#fff;border-top:2px solid var(--accent)}
 
     /* toast */
     .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#15151d;border:1px solid var(--line);padding:10px 14px;border-radius:10px;display:none;z-index:20}
@@ -82,15 +86,22 @@
 </head>
 <body>
 <div class="app">
-  <div class="container">
-    <div id="screen"></div>
-  </div>
+  <div class="container"><div id="screen"></div></div>
 
+  <!-- TON-like tabbar -->
   <div class="tabbar">
-    <button id="tab-home"     onclick="App.route('home')">Главная</button>
-    <button id="tab-trade"    onclick="App.route('trade')">Торговля</button>
-    <button id="tab-settings" onclick="App.route('settings')">Настройки</button>
-    <button id="tab-mod"      onclick="App.route('moderation')">Модерация</button>
+    <button class="tab item" data-tab="home" onclick="App.route('home')">
+      <span class="ico">🏪</span><span class="lbl">Главная</span>
+    </button>
+    <button class="tab item" data-tab="trade" onclick="App.route('trade')">
+      <span class="ico">📈</span><span class="lbl">Торговля</span>
+    </button>
+    <button class="tab item" data-tab="settings" onclick="App.route('settings')">
+      <span class="ico">⚙️</span><span class="lbl">Настройки</span>
+    </button>
+    <button class="tab item" id="tab-mod" data-tab="moderation" onclick="App.route('moderation')">
+      <span class="ico">🛡️</span><span class="lbl">Модерация</span>
+    </button>
   </div>
 </div>
 
@@ -98,52 +109,39 @@
 
 <script>
 const Store = {
-  key: 'majmarket-state',
-  load(){
-    try{
-      const raw = localStorage.getItem(this.key);
-      if(!raw) return this.seed();
-      return JSON.parse(raw);
-    }catch(e){ return this.seed(); }
-  },
+  key:'majmarket-state',
+  load(){ try{const raw=localStorage.getItem(this.key); if(!raw) return this.seed(); return JSON.parse(raw);}catch(e){return this.seed()} },
   seed(){
     return {
       user:{}, role:'user',
       wallet:{ balance:100000, hold:0, history:[] },
       listings:[
-        { id: uid(), seller:null, title:'Футболка Majestic',    price_mjt:1500, category:'Одежда',    server:'RU1', status:'active', created_at:Date.now() },
-        { id: uid(), seller:null, title:'Кастом скин (услуга)', price_mjt:3200, category:'Услуги',    server:'RU2', status:'active', created_at:Date.now()-100000 },
-        { id: uid(), seller:null, title:'Номер А777АА',         price_mjt:8000, category:'Транспорт', server:'RU1', status:'active', created_at:Date.now()-200000 }
+        { id:uid(), seller:null, title:'Футболка Majestic',    price_mjt:1500, category:'Одежда',    server:'RU1', status:'active', created_at:Date.now() },
+        { id:uid(), seller:null, title:'Кастом скин (услуга)', price_mjt:3200, category:'Услуги',    server:'RU2', status:'active', created_at:Date.now()-100000 },
+        { id:uid(), seller:null, title:'Номер А777АА',         price_mjt:8000, category:'Транспорт', server:'RU1', status:'active', created_at:Date.now()-200000 }
       ],
       orders:[]
     }
   },
   save(d){ localStorage.setItem(this.key, JSON.stringify(d)); }
 };
-
 function uid(){ return Math.random().toString(36).slice(2) }
 
 const App = {
   data: Store.load(),
   botUsername: 'MajMarketBot',
 
-  route(name, param){
-    location.hash = name + (param?':'+param:'');
-    this.render();
-  },
-  toast(msg){
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.style.display='block';
-    setTimeout(()=>t.style.display='none',1500);
-  },
+  route(name,param){ location.hash = name + (param?':'+param:''); this.render(); },
+  toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',1500); },
+
   setActiveTab(name){
-    ['home','trade','settings','moderation'].forEach(n=>{
-      const el = document.getElementById('tab-'+n);
-      if(el) el.classList.toggle('active', n===name);
+    document.querySelectorAll('.tabbar .item').forEach(el=>{
+      el.classList.toggle('active', el.dataset.tab===name);
     });
     const mod = document.getElementById('tab-mod');
-    if(mod) mod.style.display = (this.data.role==='moderator'?'block':'none');
+    if(mod) mod.style.display = (this.data.role==='moderator'?'flex':'none');
   },
+
   initUserFromTelegram(){
     try{
       const tg = window.Telegram?.WebApp;
@@ -151,7 +149,7 @@ const App = {
       const u = tg?.initDataUnsafe?.user;
       if(u){
         this.data.user = { id:u.id, username:u.username||u.first_name||('user'+u.id) };
-        this.data.listings.forEach(l=>{ if(!l.seller) l.seller = this.data.user.id; });
+        this.data.listings.forEach(l=>{ if(!l.seller) l.seller=this.data.user.id; });
         Store.save(this.data);
       }
     }catch(e){}
@@ -160,6 +158,7 @@ const App = {
   /* ===== Screens ===== */
   screenHome(){
     const w = this.data.wallet;
+    const u = this.data.user.username || 'Гость';
     const recent = this.data.orders.slice(-5).reverse().map(o=>{
       const l = this.data.listings.find(x=>x.id===o.listing_id);
       return `<div class="chip">#${o.id.slice(0,5)} · ${l?.title||'Лот'} · <b>${o.status}</b></div>`;
@@ -169,12 +168,10 @@ const App = {
       <div class="hero">
         <div class="title">
           <div class="badge">M</div>
-          <div style="font-weight:800">MajMarket</div>
-        </div>
-
-        <div class="pill" role="tablist" aria-label="mode">
-          <button class="active" onclick="App.toast('Режим: Крипто')">Крипто</button>
-          <button onclick="App.toast('Режим: MJT')">MJT</button>
+          <div>
+            <div style="font-weight:800">MajMarket</div>
+            <div class="meta">Привет, ${u} 👋</div>
+          </div>
         </div>
 
         <div class="balance">
@@ -186,25 +183,12 @@ const App = {
           <div class="tile" onclick="App.route('settings')"><i><b>＋</b></i><span>Пополнить</span></div>
           <div class="tile" onclick="App.route('trade')"><i><b>🛒</b></i><span>Покупка</span></div>
           <div class="tile" onclick="App.route('sell')"><i><b>↑</b></i><span>Продажа</span></div>
-          <div class="tile" onclick="App.toast('Скоро')"><i><b>⇄</b></i><span>Обмен</span></div>
         </div>
       </div>
 
       <div class="card">
         <h4>Последние покупки / продажи</h4>
         <div class="row" style="margin-top:6px">${recent}</div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <h4>Статусы заказов</h4>
-        <div class="row" style="margin-top:6px">
-          <span class="chip">created</span>
-          <span class="chip">holded</span>
-          <span class="chip">transfer</span>
-          <span class="chip">confirm</span>
-          <span class="chip">completed</span>
-          <span class="chip">dispute</span>
-        </div>
       </div>
     `;
   },
@@ -327,7 +311,7 @@ const App = {
     `;
   },
 
-  /* ===== Actions ===== */
+  /* ===== actions ===== */
   createListing(){
     const t = document.getElementById('t').value.trim();
     const c = document.getElementById('c').value;
@@ -369,7 +353,7 @@ const App = {
     }, 2000);
   },
 
-  resolve(orderId, decision){
+  resolve(orderId,decision){
     const o = this.data.orders.find(x=>x.id===orderId);
     if(!o) return;
     o.status = decision==='release' ? 'completed' : 'refunded';
@@ -393,7 +377,7 @@ const App = {
 
   render(){
     const raw = (location.hash||'#home').replace('#','');
-    const [name, param] = raw.split(':');
+    const [name,param] = raw.split(':');
     const known = ['home','trade','sell','order','settings','moderation'];
     if(!known.includes(name)){ this.route('home'); return; }
 
@@ -410,7 +394,8 @@ const App = {
 
 window.addEventListener('hashchange', ()=>App.render());
 window.addEventListener('load', ()=>{
-  if(!location.hash) location.hash = 'home'; // всегда стартуем с Главной
+  if(!location.hash) location.hash='home';      // всегда стартуем с Главной
+  try{ const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand(); tg?.MainButton?.hide(); }catch(e){}
   App.initUserFromTelegram();
   App.render();
 });
