@@ -44,9 +44,9 @@
       display:flex;align-items:center;justify-content:center;
       background:#1b1b22;border-radius:12px
     }
-    .tile i{width:40px;height:40px}            /* плитки (Главная/Настройки) */
+    .tile i{width:40px;height:40px}
     .icoBox{width:42px;height:42px}
-    .tabbar .icoBox{width:30px;height:30px;border-radius:10px}   /* ТАБ-ИКОНКА — ОДИН РАЗМЕР */
+    .tabbar .icoBox{width:30px;height:30px;border-radius:10px}
     .tile i b,.icoBox b,.tabbar .icoBox b{color:var(--accent);font-size:20px;font-weight:800;line-height:1}
     .tile span{font-size:12px}
 
@@ -107,7 +107,7 @@
 <div class="app">
   <div class="container"><div id="screen"></div></div>
 
-  <!-- Minimal tabbar with equal-size icons -->
+  <!-- Minimal tabbar -->
   <div class="tabbar">
     <button class="tab item" data-tab="home" onclick="App.route('home')">
       <span class="icoBox"><b>⌂</b></span><span class="lbl">Главная</span>
@@ -127,6 +127,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
+/* ================== DATA STORE ================== */
 const Store = {
   key:'majmarket-state',
   load(){ try{const raw=localStorage.getItem(this.key); if(!raw) return this.seed(); return JSON.parse(raw);}catch(e){return this.seed()} },
@@ -135,9 +136,9 @@ const Store = {
       user:{}, role:'user',
       wallet:{ balance:100000, hold:0, history:[] },
       listings:[
-        { id:uid(), seller:null, title:'Футболка Majestic',    price_mjt:1500, category:'Одежда',    server:'RU1', status:'active', created_at:Date.now() },
-        { id:uid(), seller:null, title:'Кастом скин (услуга)', price_mjt:3200, category:'Услуги',    server:'RU2', status:'active', created_at:Date.now()-100000 },
-        { id:uid(), seller:null, title:'Номер А777АА',         price_mjt:8000, category:'Транспорт', server:'RU1', status:'active', created_at:Date.now()-200000 }
+        { id:uid(), seller:123, title:'Футболка Majestic',    price_mjt:1500, category:'Одежда',    server:'RU1', status:'active', created_at:Date.now() },
+        { id:uid(), seller:123, title:'Кастом скин (услуга)', price_mjt:3200, category:'Услуги',    server:'RU2', status:'active', created_at:Date.now()-100000 },
+        { id:uid(), seller:123, title:'Номер А777АА',         price_mjt:8000, category:'Транспорт', server:'RU1', status:'active', created_at:Date.now()-200000 }
       ],
       orders:[]
     }
@@ -146,6 +147,7 @@ const Store = {
 };
 function uid(){ return Math.random().toString(36).slice(2) }
 
+/* ================== APP ================== */
 const App = {
   data: Store.load(),
   botUsername: 'MajMarketBot',
@@ -176,17 +178,33 @@ const App = {
       const u = tg?.initDataUnsafe?.user;
       if(u){
         this.data.user = { id:u.id, username:u.username||u.first_name||('user'+u.id) };
-        this.data.listings.forEach(l=>{ if(!l.seller) l.seller=this.data.user.id; });
+        // seed-продавца 123 подменяем на текущего, чтобы можно тестить
+        this.data.listings.forEach(l=>{ if(l.seller===123 || !l.seller) l.seller=this.data.user.id; });
         Store.save(this.data);
       }
     }catch(e){}
   },
 
-  /* ===== Screens ===== */
+  /* ========== NOTIFY HELPERS ========== */
+  async notify(text){ // текущему пользователю
+    try{
+      const chat_id = this.data.user.id;
+      if(!chat_id) return;
+      await fetch('/api/notify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id,text})});
+    }catch(e){}
+  },
+  async notifyTo(chat_id,text){ // кому-то ещё (продавцу/покупателю)
+    try{
+      if(!chat_id) return;
+      await fetch('/api/notify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id,text})});
+    }catch(e){}
+  },
+
+  /* ================== SCREENS ================== */
   screenHome(){
     const w = this.data.wallet;
     const u = this.data.user.username || 'Гость';
-    const recent = this.data.orders.slice(-5).reverse().map(o=>{
+    const recent = this.data.orders.slice(-8).reverse().map(o=>{
       const l = this.data.listings.find(x=>x.id===o.listing_id);
       return `<div class="chip">#${o.id.slice(0,5)} · ${l?.title||'Лот'} · <b>${o.status}</b></div>`;
     }).join('') || '<span class="chip">пока нет заказов</span>';
@@ -273,25 +291,47 @@ const App = {
     `;
   },
 
+  /** Экран сделки с двухсторонним подтверждением */
   screenOrder(listingId){
     const l = this.data.listings.find(x=>x.id===listingId);
     if(!l) return `<div class="card">Лот не найден</div>`;
-    const fee = Math.round(l.price_mjt*0.03);
+
+    const me = this.data.user.id;
+    let o = this.data.orders.slice().reverse().find(o=>
+      o.listing_id===l.id && (o.buyer_id===me || o.seller_id===me) && !['completed','refunded'].includes(o.status)
+    );
+
+    const role = (o && me===o.seller_id) ? 'seller' : (o && me===o.buyer_id ? 'buyer' : 'none');
+
+    const actions = [];
+    if(!o){
+      actions.push(`<button class="btn" onclick="App.hold('${l.id}')">Заблокировать ${l.price_mjt} MJT</button>`);
+    }else{
+      if(role==='seller'){
+        if(!o.seller_confirm) actions.push(`<button class="btn" onclick="App.confirm('${o.id}','seller')">Я передал товар</button>`);
+        if(o.seller_confirm) actions.push(`<span class="chip">Ожидаем подтверждение покупателя</span>`);
+      }
+      if(role==='buyer'){
+        if(o.seller_confirm && !o.buyer_confirm) actions.push(`<button class="btn" onclick="App.confirm('${o.id}','buyer')">Я получил товар</button>`);
+        if(!o.seller_confirm) actions.push(`<span class="chip">Ожидаем подтверждение продавца</span>`);
+      }
+      actions.push(`<button class="btn secondary" onclick="App.dispute('${o.id}')">Открыть спор</button>`);
+    }
 
     return `
       <div class="card">
         <h3>${l.title}</h3>
         <div class="meta">${l.category} • ${l.server}</div>
         <div class="price" style="margin:8px 0">${l.price_mjt} MJT</div>
-        <div class="chip">Комиссия: ${fee} MJT</div>
-        <div class="toolbar" style="margin-top:10px">
-          <button class="btn" onclick="App.hold('${l.id}')">Заблокировать ${l.price_mjt} MJT</button>
-          <button class="btn secondary" onclick="App.route('trade')">Назад</button>
-        </div>
+        <div class="toolbar" style="margin-top:10px">${actions.join(' ')}</div>
       </div>
 
       <div class="card" style="margin-top:12px">
-        <b>Как это работает?</b><br/>• Эскроу удерживает сумму → Передача → Двойное подтверждение → Выплата.
+        <b>Статус сделки:</b>
+        <div class="meta">${
+          o ? `${o.status}${o.seller_confirm?' • seller✔':''}${o.buyer_confirm?' • buyer✔':''}` : 'не начата'
+        }</div>
+        <div class="meta">Эскроу удерживает средства → Продавец подтверждает передачу → Покупатель подтверждает получение → Выплата (комиссия 3%). Спор — модераторы.</div>
       </div>
     `;
   },
@@ -321,7 +361,23 @@ const App = {
     `;
   },
 
-  /* Новый экран — Пополнение */
+  screenModeration(){
+    if(this.data.role!=='moderator') return `<div class="card">Доступ только модераторам</div>`;
+    const open = this.data.orders.filter(o=>o.status==='dispute').slice(-20).reverse();
+    return `
+      <div class="card">
+        <h3>Контроль сделок</h3>
+        ${open.length ? open.map(o=>`
+          <div class="row" style="margin:8px 0">
+            <div class="chip">#${o.id.slice(0,5)}</div>
+            <button class="btn secondary" onclick="App.modResolve('${o.id}','release')">Release</button>
+            <button class="btn secondary" onclick="App.modResolve('${o.id}','refund')">Refund</button>
+          </div>
+        `).join('') : '<div class="meta">Споров нет</div>'}
+      </div>
+    `;
+  },
+
   screenTopup(){
     const start = 1000;
     return `
@@ -340,7 +396,7 @@ const App = {
     `;
   },
 
-  /* ===== actions ===== */
+  /* ================== ACTIONS ================== */
   createListing(){
     const t = document.getElementById('t').value.trim();
     const c = document.getElementById('c').value;
@@ -354,32 +410,105 @@ const App = {
     this.route('trade');
   },
 
+  /** Покупатель начинает сделку: удержание, уведомления обеим сторонам */
   async hold(listingId){
     const l = this.data.listings.find(x=>x.id===listingId);
     const w = this.data.wallet;
     if(!l) return;
+
     if(w.balance < l.price_mjt){ this.toast('Недостаточно MJT'); return; }
 
-    const order = { id:uid(), listing_id:l.id, buyer_id:this.data.user.id||'me', seller_id:l.seller||this.data.user.id||'me', price:l.price_mjt, status:'created' };
-    this.data.orders.push(order);
+    const order = {
+      id: uid(),
+      listing_id: l.id,
+      buyer_id: this.data.user.id||'me',
+      seller_id: l.seller,
+      price: l.price_mjt,
+      status: 'holded',
+      seller_confirm: false,
+      buyer_confirm: false,
+      created_at: Date.now()
+    };
 
-    w.balance -= l.price_mjt; w.hold += l.price_mjt; order.status='holded';
+    // эскроу
+    w.balance -= l.price_mjt; w.hold += l.price_mjt;
     w.history.push({kind:'hold', amount:l.price_mjt, ts:Date.now(), order_id:order.id});
+    this.data.orders.push(order);
     Store.save(this.data);
+
+    // нотификации
     this.toast(`Удержано ${l.price_mjt} MJT`);
     this.notify(`Удержано ${l.price_mjt} MJT по заказу #${order.id.slice(0,5)}`);
+    this.notifyTo(order.seller_id, `Новый заказ #${order.id.slice(0,5)} на «${l.title}» за ${l.price_mjt} MJT. Подтвердите передачу в мини-приложении.`);
 
-    setTimeout(()=>{ order.status='transfer'; Store.save(this.data); this.toast('Продавец подтвердил передачу'); this.notify(`Заказ #${order.id.slice(0,5)}: продавец подтвердил передачу`) }, 800);
-    setTimeout(()=>{
-      order.status='completed';
-      const fee = Math.round(l.price_mjt*0.03);
-      w.hold -= l.price_mjt;
-      w.history.push({kind:'release', amount:l.price_mjt-fee, ts:Date.now(), order_id:order.id});
-      w.history.push({kind:'fee', amount:fee, ts:Date.now(), order_id:order.id});
+    this.route('order', l.id);
+  },
+
+  /** Продавец/покупатель подтверждают */
+  confirm(orderId, who){
+    const o = this.data.orders.find(x=>x.id===orderId);
+    if(!o) return;
+    if(who==='seller') o.seller_confirm = true;
+    if(who==='buyer')  o.buyer_confirm  = true;
+
+    if(o.seller_confirm && o.buyer_confirm){
+      // релиз средств
+      const w = this.data.wallet;
+      const fee = Math.round(o.price*0.03);
+
+      o.status = 'completed';
+      w.hold -= o.price;
+      w.history.push({kind:'release', amount:o.price-fee, ts:Date.now(), order_id:o.id});
+      w.history.push({kind:'fee', amount:fee, ts:Date.now(), order_id:o.id});
       Store.save(this.data);
-      this.toast('Сделка завершена'); this.notify(`Заказ #${order.id.slice(0,5)} завершён`);
+
+      this.toast('Сделка завершена');
+      this.notify('Сделка завершена — средства выплачены (минус комиссия)');
+      this.notifyTo(o.seller_id, `Заказ #${o.id.slice(0,5)} завершён. Выплата: ${o.price-fee} MJT (комиссия ${fee}).`);
+      this.notifyTo(o.buyer_id,  `Заказ #${o.id.slice(0,5)} завершён. Спасибо за покупку!`);
       this.route('home');
-    }, 2000);
+    }else{
+      Store.save(this.data);
+      this.toast('Подтверждение принято');
+    }
+    this.render();
+  },
+
+  /** Открыть спор */
+  dispute(orderId){
+    const o = this.data.orders.find(x=>x.id===orderId);
+    if(!o) return;
+    o.status = 'dispute';
+    Store.save(this.data);
+    this.toast('Открыт спор — модераторы уведомлены');
+    this.notifyTo(o.seller_id, `По заказу #${o.id.slice(0,5)} открыт спор.`);
+    this.notify('Мы сообщили модераторам. Ожидайте связи.');
+  },
+
+  /** Модератор решает спор */
+  modResolve(orderId, decision){
+    const o = this.data.orders.find(x=>x.id===orderId);
+    if(!o) return;
+    const w = this.data.wallet;
+    if(decision==='release'){
+      const fee = Math.round(o.price*0.03);
+      o.status='completed';
+      w.hold -= o.price;
+      w.history.push({kind:'release', amount:o.price-fee, ts:Date.now(), order_id:o.id});
+      w.history.push({kind:'fee', amount:fee, ts:Date.now(), order_id:o.id});
+      this.notifyTo(o.seller_id, `Модерация: Release по #${o.id.slice(0,5)}.`);
+      this.notifyTo(o.buyer_id,  `Модерация: Release по #${o.id.slice(0,5)}.`);
+    }else{
+      o.status='refunded';
+      w.hold -= o.price;
+      w.balance += o.price;
+      w.history.push({kind:'refund', amount:o.price, ts:Date.now(), order_id:o.id});
+      this.notifyTo(o.seller_id, `Модерация: Refund по #${o.id.slice(0,5)}.`);
+      this.notifyTo(o.buyer_id,  `Модерация: Refund по #${o.id.slice(0,5)}.`);
+    }
+    Store.save(this.data);
+    this.toast(`Решение: ${decision}`);
+    this.render();
   },
 
   doTopup(){
@@ -390,22 +519,6 @@ const App = {
     this.toast(`+${amt} MJT`);
     this.notify(`Баланс пополнен на ${amt} MJT`);
     this.route('settings');
-  },
-
-  resolve(orderId,decision){
-    const o = this.data.orders.find(x=>x.id===orderId);
-    if(!o) return;
-    o.status = decision==='release' ? 'completed' : 'refunded';
-    Store.save(this.data);
-    this.toast(`Решение: ${decision}`);
-  },
-
-  async notify(text){
-    try{
-      const chat_id = this.data.user.id;
-      if(!chat_id) return;
-      await fetch('/api/notify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id,text})});
-    }catch(e){}
   },
 
   render(){
