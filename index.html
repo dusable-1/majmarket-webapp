@@ -11,32 +11,72 @@
       --accent:#E93E8F; --ok:#2DD688; --warn:#E5C15A; --err:#FF4A4A;
     }
     *{box-sizing:border-box}
-    html,body{height:100%} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial}
+    html,body{height:100%}
+    body{
+      margin:0;background:var(--bg);color:var(--text);
+      font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial;
+    }
     .app{min-height:100vh;display:flex;flex-direction:column}
-    .container{max-width:980px;margin:0 auto;padding:16px 16px 84px}
+    .container{max-width:980px;margin:0 auto;padding:16px 16px 96px}
 
-    .hero{background:linear-gradient(180deg,#111117, #0C0C10);border:1px solid var(--line);border-radius:18px;padding:18px;margin:10px 0}
-    .hero h2{margin:0 0 6px 0}
+    /* ====== TON-style ====== */
+    .hero{
+      background:
+        radial-gradient(140% 140% at 20% 0%, rgba(233,62,143,.25) 0%, rgba(233,62,143,.07) 38%, rgba(17,17,23,1) 62%),
+        linear-gradient(180deg,#14141b 0%, #0f0f14 100%);
+      border:1px solid var(--line); border-radius:22px; padding:18px; margin:8px 0 12px;
+    }
+    .title{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .badge{
+      width:34px;height:34px;border-radius:11px;background:#1b1b22;
+      display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent)
+    }
+    .pill{display:inline-flex;gap:6px;padding:6px;border:1px solid var(--line);background:#0f0f14;border-radius:14px}
+    .pill button{background:transparent;border:0;color:#CFCFDE;padding:6px 10px;border-radius:10px;font-weight:700;cursor:pointer}
+    .pill button.active{background:#1b1b22;color:#fff}
+
+    .balance{display:flex;align-items:baseline;gap:10px;margin:10px 0 12px}
+    .amount{font-size:30px;font-weight:800;letter-spacing:.2px}
+    .sub{color:var(--muted);font-size:13px}
+
+    .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+    .tile{
+      display:flex;flex-direction:column;align-items:center;gap:8px;
+      background:#111117;border:1px solid var(--line);border-radius:16px;padding:12px;cursor:pointer;user-select:none
+    }
+    .tile i{width:36px;height:36px;border-radius:12px;background:#1b1b22;display:flex;align-items:center;justify-content:center}
+    .tile i b{color:var(--accent);font-size:18px}
+    .tile span{font-size:12px}
+
     .row{display:flex;flex-wrap:wrap;gap:10px}
     .chip{border:1px solid var(--line);border-radius:12px;padding:6px 10px;color:var(--muted);font-size:13px}
-    .btn{background:var(--accent);border:0;color:#fff;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer}
-    .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+    .btn{background:var(--accent);border:0;color:#fff;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid var(--line);color:#fff}
     .btn.secondary{background:#1a1a21;border:1px solid var(--line);color:#fff}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
-    .card h4{margin:0 0 6px} .meta{color:var(--muted);font-size:13px;margin:4px 0 10px}
-    .price{color:var(--accent);font-weight:700}
+    .card{background:#111117;border:1px solid var(--line);border-radius:18px;padding:14px}
+    .card h3,.card h4{margin:0 0 8px}
+    .meta{color:var(--muted);font-size:13px;margin:2px 0 10px}
+    .price{color:var(--accent);font-weight:800}
 
-    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
-    input,select,textarea{width:100%;background:#0f0f14;color:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}
+    input,select,textarea{
+      width:100%;background:#0f0f14;color:#fff;border:1px solid var(--line);
+      border-radius:12px;padding:12px
+    }
     label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
 
+    /* каталог */
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+    .product{background:#0f0f14;border:1px solid var(--line);border-radius:16px;padding:14px}
+    .product h4{margin:0 0 6px}
 
+    /* таб-бар */
     .tabbar{position:fixed;left:0;right:0;bottom:0;background:#0B0B0F;border-top:1px solid var(--line);display:flex}
-    .tabbar button{flex:1;background:transparent;border:0;color:#CFCFDE;padding:12px 8px;font-weight:600}
+    .tabbar button{flex:1;background:transparent;border:0;color:#CFCFDE;padding:12px 8px;font-weight:800}
     .tabbar button.active{color:#fff;border-top:2px solid var(--accent)}
 
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:#15151d;border:1px solid var(--line);padding:10px 14px;border-radius:10px;display:none;z-index:20}
+    /* toast */
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#15151d;border:1px solid var(--line);padding:10px 14px;border-radius:10px;display:none;z-index:20}
     a.link{color:var(--accent);text-decoration:none}
   </style>
 </head>
@@ -68,23 +108,25 @@ const Store = {
   },
   seed(){
     return {
-      user: {}, role: 'user',
-      wallet: { balance: 100000, hold: 0, history: [] },
-      listings: [
-        { id: uid(), seller: null, title:'Футболка Majestic',       price_mjt:1500, category:'Одежда',    server:'RU1', status:'active', created_at: Date.now() },
-        { id: uid(), seller: null, title:'Кастом скин (услуга)',    price_mjt:3200, category:'Услуги',    server:'RU2', status:'active', created_at: Date.now()-100000 },
-        { id: uid(), seller: null, title:'Номер А777АА',            price_mjt:8000, category:'Транспорт', server:'RU1', status:'active', created_at: Date.now()-200000 }
+      user:{}, role:'user',
+      wallet:{ balance:100000, hold:0, history:[] },
+      listings:[
+        { id: uid(), seller:null, title:'Футболка Majestic',    price_mjt:1500, category:'Одежда',    server:'RU1', status:'active', created_at:Date.now() },
+        { id: uid(), seller:null, title:'Кастом скин (услуга)', price_mjt:3200, category:'Услуги',    server:'RU2', status:'active', created_at:Date.now()-100000 },
+        { id: uid(), seller:null, title:'Номер А777АА',         price_mjt:8000, category:'Транспорт', server:'RU1', status:'active', created_at:Date.now()-200000 }
       ],
-      orders: []
+      orders:[]
     }
   },
-  save(data){ localStorage.setItem(this.key, JSON.stringify(data)); }
+  save(d){ localStorage.setItem(this.key, JSON.stringify(d)); }
 };
 
 function uid(){ return Math.random().toString(36).slice(2) }
 
 const App = {
   data: Store.load(),
+  botUsername: 'MajMarketBot',
+
   route(name, param){
     location.hash = name + (param?':'+param:'');
     this.render();
@@ -92,7 +134,7 @@ const App = {
   toast(msg){
     const t = document.getElementById('toast');
     t.textContent = msg; t.style.display='block';
-    setTimeout(()=>t.style.display='none', 1500);
+    setTimeout(()=>t.style.display='none',1500);
   },
   setActiveTab(name){
     ['home','trade','settings','moderation'].forEach(n=>{
@@ -105,17 +147,17 @@ const App = {
   initUserFromTelegram(){
     try{
       const tg = window.Telegram?.WebApp;
-      tg?.ready(); tg?.expand();
+      tg?.ready(); tg?.expand(); tg?.MainButton?.hide();
       const u = tg?.initDataUnsafe?.user;
       if(u){
-        this.data.user = { id: u.id, username: u.username || u.first_name || ('user'+u.id) };
+        this.data.user = { id:u.id, username:u.username||u.first_name||('user'+u.id) };
         this.data.listings.forEach(l=>{ if(!l.seller) l.seller = this.data.user.id; });
         Store.save(this.data);
       }
     }catch(e){}
   },
 
-  // Screens
+  /* ===== Screens ===== */
   screenHome(){
     const w = this.data.wallet;
     const recent = this.data.orders.slice(-5).reverse().map(o=>{
@@ -125,18 +167,30 @@ const App = {
 
     return `
       <div class="hero">
-        <h2>Привет, ${this.data.user.username||'Гость'}</h2>
-        <div class="row" style="margin:8px 0 12px">
-          <div class="chip">Баланс: <b>${w.balance}</b> MJT</div>
-          <div class="chip">В удержании: <b>${w.hold}</b> MJT</div>
+        <div class="title">
+          <div class="badge">M</div>
+          <div style="font-weight:800">MajMarket</div>
         </div>
-        <div class="row">
-          <button class="btn" onclick="App.route('settings')">Пополнить</button>
-          <button class="btn ghost" onclick="App.route('trade')">К каталогу</button>
+
+        <div class="pill" role="tablist" aria-label="mode">
+          <button class="active" onclick="App.toast('Режим: Крипто')">Крипто</button>
+          <button onclick="App.toast('Режим: MJT')">MJT</button>
+        </div>
+
+        <div class="balance">
+          <div class="amount">${w.balance} MJT</div>
+          <div class="sub">в удержании: ${w.hold}</div>
+        </div>
+
+        <div class="actions">
+          <div class="tile" onclick="App.route('settings')"><i><b>＋</b></i><span>Пополнить</span></div>
+          <div class="tile" onclick="App.route('trade')"><i><b>🛒</b></i><span>Покупка</span></div>
+          <div class="tile" onclick="App.route('sell')"><i><b>↑</b></i><span>Продажа</span></div>
+          <div class="tile" onclick="App.toast('Скоро')"><i><b>⇄</b></i><span>Обмен</span></div>
         </div>
       </div>
 
-      <div class="card" style="margin-top:12px">
+      <div class="card">
         <h4>Последние покупки / продажи</h4>
         <div class="row" style="margin-top:6px">${recent}</div>
       </div>
@@ -154,32 +208,45 @@ const App = {
       </div>
     `;
   },
+
   screenTrade(){
-    const list = this.data.listings.filter(x=>x.status==='active').sort((a,b)=>b.created_at-a.created_at);
+    const list = this.data.listings
+      .filter(x=>x.status==='active')
+      .sort((a,b)=>b.created_at-a.created_at);
+
     return `
       <div class="card">
-        <div class="row">
-          <input id="q" placeholder="Поиск…"/>
-          <select id="cat"><option value="">Категория</option><option>Одежда</option><option>Аксессуары</option><option>Утилиты</option><option>Услуги</option><option>Транспорт</option><option>Прочее</option></select>
+        <h3>Торговля</h3>
+        <div class="toolbar">
+          <input id="q" placeholder="Поиск по названию…"/>
+          <select id="cat">
+            <option value="">Категория</option>
+            <option>Одежда</option><option>Аксессуары</option>
+            <option>Утилиты</option><option>Услуги</option>
+            <option>Транспорт</option><option>Прочее</option>
+          </select>
           <select id="srv"><option value="">Сервер</option><option>RU1</option><option>RU2</option><option>RU3</option></select>
-          <button class="btn secondary" onclick="App.render()">Применить</button>
+          <button class="btn secondary" onclick="App.render()">Фильтровать</button>
           <button class="btn" onclick="App.route('sell')">+ Выставить на продажу</button>
         </div>
       </div>
-      <div class="grid" style="margin-top:12px" id="grid">
+
+      <div class="grid" style="margin-top:12px">
         ${list.map(l=>`
-          <div class="card">
+          <div class="product">
             <h4>${l.title}</h4>
             <div class="meta">${l.category} • ${l.server}</div>
             <div class="price">${l.price_mjt} MJT</div>
             <div class="toolbar">
               <button class="btn" onclick="App.route('order','${l.id}')">Купить</button>
+              <button class="btn ghost" onclick="App.toast('В избранное: скоро')">В избранное</button>
             </div>
           </div>
         `).join('')}
       </div>
     `;
   },
+
   screenSell(){
     return `
       <div class="card">
@@ -194,10 +261,12 @@ const App = {
       </div>
     `;
   },
+
   screenOrder(listingId){
     const l = this.data.listings.find(x=>x.id===listingId);
     if(!l) return `<div class="card">Лот не найден</div>`;
     const fee = Math.round(l.price_mjt*0.03);
+
     return `
       <div class="card">
         <h3>${l.title}</h3>
@@ -209,72 +278,80 @@ const App = {
           <button class="btn secondary" onclick="App.route('trade')">Назад</button>
         </div>
       </div>
+
       <div class="card" style="margin-top:12px">
-        <b>Как это работает?</b><br/>• Удерживаем сумму на эскроу → Передача → Двойное подтверждение → Выплата.
+        <b>Как это работает?</b><br/>• Эскроу удерживает сумму → Передача → Двойное подтверждение → Выплата.
       </div>
     `;
   },
+
   screenSettings(){
     const w = this.data.wallet;
     return `
       <div class="hero">
-        <h2>Настройки</h2>
-        <div class="row" style="margin:8px 0 12px">
+        <div class="title"><div class="badge">⚙︎</div><div style="font-weight:800">Настройки</div></div>
+        <div class="row" style="margin:6px 0 10px">
           <div class="chip">Баланс: <b>${w.balance}</b> MJT</div>
           <div class="chip">В удержании: <b>${w.hold}</b> MJT</div>
         </div>
-        <div class="row">
-          <button class="btn" onclick="App.fakeTopup()">Пополнить +1000</button>
-          <a class="btn ghost" href="https://t.me/${App.botUsername}?start=support" target="_blank" rel="noopener">Связь с модераторами</a>
+        <div class="actions" style="grid-template-columns:repeat(3,1fr)">
+          <div class="tile" onclick="App.fakeTopup()"><i><b>＋</b></i><span>Пополнить +1000</span></div>
+          <div class="tile" onclick="location.href='https://t.me/${App.botUsername}?start=support'"><i><b>💬</b></i><span>Модераторы</span></div>
+          <div class="tile" onclick="App.toast('KYC скоро')"><i><b>🪪</b></i><span>Верификация</span></div>
         </div>
       </div>
 
       <div class="card">
-        <h4>Верификация</h4>
-        <div class="meta">KYC-lite (по желанию, повышает лимиты)</div>
-        <div class="toolbar"><button class="btn secondary" onclick="App.toast('Скоро')">Пройти</button></div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
         <h4>Недавние заказы</h4>
         <div class="meta">${this.data.orders.slice(-5).reverse().map(o=>`#${o.id.slice(0,5)} · ${o.status}`).join(' · ') || 'пока пусто'}</div>
       </div>
     `;
   },
+
   screenModeration(){
     if(this.data.role!=='moderator') return `<div class="card">Доступ только модераторам</div>`;
     const disputes = this.data.orders.filter(o=>o.status==='dispute');
     return `
       <div class="card">
         <h3>Контроль сделок</h3>
-        ${disputes.length? disputes.map(o=>`<div class="row" style="margin:8px 0"><div class="chip">#${o.id.slice(0,5)}</div><button class="btn secondary" onclick="App.resolve('${o.id}','release')">Release</button><button class="btn secondary" onclick="App.resolve('${o.id}','refund')">Refund</button></div>`).join('') : '<div class="meta">Споров нет</div>'}
+        ${disputes.length
+          ? disputes.map(o=>`
+              <div class="row" style="margin:8px 0">
+                <div class="chip">#${o.id.slice(0,5)}</div>
+                <button class="btn secondary" onclick="App.resolve('${o.id}','release')">Release</button>
+                <button class="btn secondary" onclick="App.resolve('${o.id}','refund')">Refund</button>
+              </div>
+            `).join('')
+          : '<div class="meta">Споров нет</div>'}
       </div>
     `;
   },
 
-  // Actions
+  /* ===== Actions ===== */
   createListing(){
     const t = document.getElementById('t').value.trim();
     const c = document.getElementById('c').value;
     const s = document.getElementById('s').value;
     const p = parseInt(document.getElementById('p').value,10)||0;
     if(!t || !p){ this.toast('Заполни название и цену'); return; }
-    const l = { id: uid(), seller: this.data.user.id || 'me', title:t, price_mjt:p, category:c, server:s, status:'active', created_at: Date.now() };
+    const l = { id:uid(), seller:this.data.user.id||'me', title:t, price_mjt:p, category:c, server:s, status:'active', created_at:Date.now() };
     this.data.listings.unshift(l);
     Store.save(this.data);
     this.toast('Объявление опубликовано');
     this.route('trade');
   },
+
   async hold(listingId){
     const l = this.data.listings.find(x=>x.id===listingId);
     const w = this.data.wallet;
     if(!l) return;
     if(w.balance < l.price_mjt){ this.toast('Недостаточно MJT'); return; }
-    const order = { id: uid(), listing_id: l.id, buyer_id: this.data.user.id||'me', seller_id: l.seller||this.data.user.id||'me', price: l.price_mjt, status:'created' };
+
+    const order = { id:uid(), listing_id:l.id, buyer_id:this.data.user.id||'me', seller_id:l.seller||this.data.user.id||'me', price:l.price_mjt, status:'created' };
     this.data.orders.push(order);
 
     w.balance -= l.price_mjt; w.hold += l.price_mjt; order.status='holded';
-    w.history.push({kind:'hold', amount:l.price_mjt, ts:Date.now(), order_id: order.id});
+    w.history.push({kind:'hold', amount:l.price_mjt, ts:Date.now(), order_id:order.id});
     Store.save(this.data);
     this.toast(`Удержано ${l.price_mjt} MJT`);
     this.notify(`Удержано ${l.price_mjt} MJT по заказу #${order.id.slice(0,5)}`);
@@ -284,13 +361,14 @@ const App = {
       order.status='completed';
       const fee = Math.round(l.price_mjt*0.03);
       w.hold -= l.price_mjt;
-      w.history.push({kind:'release', amount:l.price_mjt-fee, ts:Date.now(), order_id: order.id});
-      w.history.push({kind:'fee', amount:fee, ts:Date.now(), order_id: order.id});
+      w.history.push({kind:'release', amount:l.price_mjt-fee, ts:Date.now(), order_id:order.id});
+      w.history.push({kind:'fee', amount:fee, ts:Date.now(), order_id:order.id});
       Store.save(this.data);
       this.toast('Сделка завершена'); this.notify(`Заказ #${order.id.slice(0,5)} завершён`);
       this.route('home');
     }, 2000);
   },
+
   resolve(orderId, decision){
     const o = this.data.orders.find(x=>x.id===orderId);
     if(!o) return;
@@ -298,39 +376,41 @@ const App = {
     Store.save(this.data);
     this.toast(`Решение: ${decision}`);
   },
+
   fakeTopup(){
     this.data.wallet.balance += 1000;
     Store.save(this.data);
-    this.toast('+1000 MJT');
-    this.notify('Баланс пополнен: +1000 MJT');
+    this.toast('+1000 MJT'); this.notify('Баланс пополнен: +1000 MJT');
   },
+
   async notify(text){
     try{
       const chat_id = this.data.user.id;
       if(!chat_id) return;
-      await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({chat_id, text}) });
+      await fetch('/api/notify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id,text})});
     }catch(e){}
   },
 
   render(){
-    const [name, param] = (location.hash.replace('#','')||'home').split(':');
+    const raw = (location.hash||'#home').replace('#','');
+    const [name, param] = raw.split(':');
+    const known = ['home','trade','sell','order','settings','moderation'];
+    if(!known.includes(name)){ this.route('home'); return; }
+
     this.setActiveTab(name);
     const el = document.getElementById('screen');
-    if(name==='home')       el.innerHTML = this.screenHome();
+    if(name==='home') el.innerHTML = this.screenHome();
     else if(name==='trade') el.innerHTML = this.screenTrade();
-    else if(name==='sell')  el.innerHTML = this.screenSell();
+    else if(name==='sell') el.innerHTML = this.screenSell();
     else if(name==='order') el.innerHTML = this.screenOrder(param);
     else if(name==='settings') el.innerHTML = this.screenSettings();
     else if(name==='moderation') el.innerHTML = this.screenModeration();
-    else el.innerHTML = '<div class="card">Нет такой страницы</div>';
-  },
-
-  botUsername: 'MajMarketBot'
+  }
 };
 
 window.addEventListener('hashchange', ()=>App.render());
 window.addEventListener('load', ()=>{
-  try{ const tg = window.Telegram?.WebApp; tg?.ready(); tg?.expand(); tg?.MainButton?.hide(); }catch(e){}
+  if(!location.hash) location.hash = 'home'; // всегда стартуем с Главной
   App.initUserFromTelegram();
   App.render();
 });
