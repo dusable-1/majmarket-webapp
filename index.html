@@ -40,8 +40,14 @@
       display:flex;flex-direction:column;align-items:center;gap:8px;
       background:#111117;border:1px solid var(--line);border-radius:16px;padding:12px;cursor:pointer;user-select:none
     }
-    .tile i{width:36px;height:36px;border-radius:12px;background:#1b1b22;display:flex;align-items:center;justify-content:center}
-    .tile i b{color:var(--accent);font-size:18px}
+    .tile i,.icoBox,.tabbar .icoBox{
+      display:flex;align-items:center;justify-content:center;
+      background:#1b1b22;border-radius:12px
+    }
+    .tile i{width:36px;height:36px}
+    .icoBox{width:42px;height:42px}
+    .tabbar .icoBox{width:26px;height:26px;border-radius:8px}
+    .tile i b,.icoBox b,.tabbar .icoBox b{color:var(--accent);font-size:18px;font-weight:800;line-height:1}
     .tile span{font-size:12px}
 
     .row{display:flex;flex-wrap:wrap;gap:10px}
@@ -65,7 +71,7 @@
     .product{background:#0f0f14;border:1px solid var(--line);border-radius:16px;padding:14px}
     .product h4{margin:0 0 6px}
 
-    /* ===== tabbar (TON-like) ===== */
+    /* ===== tabbar (minimal) ===== */
     .tabbar{
       position:fixed;left:0;right:0;bottom:0;background:#0B0B0F;
       border-top:1px solid var(--line);display:flex;padding:6px 4px
@@ -75,7 +81,6 @@
       display:flex;flex-direction:column;align-items:center;gap:4px;
       padding:8px 4px 10px;font-weight:800
     }
-    .tabbar .item .ico{font-size:22px;line-height:1}
     .tabbar .item .lbl{font-size:12px}
     .tabbar .item.active{color:#fff;border-top:2px solid var(--accent)}
 
@@ -88,19 +93,19 @@
 <div class="app">
   <div class="container"><div id="screen"></div></div>
 
-  <!-- TON-like tabbar -->
+  <!-- Minimal tabbar -->
   <div class="tabbar">
     <button class="tab item" data-tab="home" onclick="App.route('home')">
-      <span class="ico">🏪</span><span class="lbl">Главная</span>
+      <span class="icoBox"><b>⌂</b></span><span class="lbl">Главная</span>
     </button>
     <button class="tab item" data-tab="trade" onclick="App.route('trade')">
-      <span class="ico">📈</span><span class="lbl">Торговля</span>
+      <span class="icoBox"><b>↗</b></span><span class="lbl">Торговля</span>
     </button>
     <button class="tab item" data-tab="settings" onclick="App.route('settings')">
-      <span class="ico">⚙️</span><span class="lbl">Настройки</span>
+      <span class="icoBox"><b>⚙︎</b></span><span class="lbl">Настройки</span>
     </button>
     <button class="tab item" id="tab-mod" data-tab="moderation" onclick="App.route('moderation')">
-      <span class="ico">🛡️</span><span class="lbl">Модерация</span>
+      <span class="icoBox"><b>🛡</b></span><span class="lbl">Модерация</span>
     </button>
   </div>
 </div>
@@ -180,8 +185,8 @@ const App = {
         </div>
 
         <div class="actions">
-          <div class="tile" onclick="App.route('settings')"><i><b>＋</b></i><span>Пополнить</span></div>
-          <div class="tile" onclick="App.route('trade')"><i><b>🛒</b></i><span>Покупка</span></div>
+          <div class="tile" onclick="App.route('topup')"><i><b>＋</b></i><span>Пополнить</span></div>
+          <div class="tile" onclick="App.route('trade')"><i><b>↓</b></i><span>Покупка</span></div>
           <div class="tile" onclick="App.route('sell')"><i><b>↑</b></i><span>Продажа</span></div>
         </div>
       </div>
@@ -273,15 +278,17 @@ const App = {
     const w = this.data.wallet;
     return `
       <div class="hero">
-        <div class="title"><div class="badge">⚙︎</div><div style="font-weight:800">Настройки</div></div>
+        <div class="title">
+          <div class="badge">⚙︎</div><div style="font-weight:800">Настройки</div>
+        </div>
         <div class="row" style="margin:6px 0 10px">
           <div class="chip">Баланс: <b>${w.balance}</b> MJT</div>
           <div class="chip">В удержании: <b>${w.hold}</b> MJT</div>
         </div>
         <div class="actions" style="grid-template-columns:repeat(3,1fr)">
-          <div class="tile" onclick="App.fakeTopup()"><i><b>＋</b></i><span>Пополнить +1000</span></div>
-          <div class="tile" onclick="location.href='https://t.me/${App.botUsername}?start=support'"><i><b>💬</b></i><span>Модераторы</span></div>
-          <div class="tile" onclick="App.toast('KYC скоро')"><i><b>🪪</b></i><span>Верификация</span></div>
+          <div class="tile" onclick="App.route('topup')"><i><b>＋</b></i><span>Пополнить +1000</span></div>
+          <div class="tile" onclick="location.href='https://t.me/${App.botUsername}?start=support'"><i><b>…</b></i><span>Модераторы</span></div>
+          <div class="tile" onclick="App.toast('KYC скоро')"><i><b>ID</b></i><span>Верификация</span></div>
         </div>
       </div>
 
@@ -292,21 +299,21 @@ const App = {
     `;
   },
 
-  screenModeration(){
-    if(this.data.role!=='moderator') return `<div class="card">Доступ только модераторам</div>`;
-    const disputes = this.data.orders.filter(o=>o.status==='dispute');
+  /* Новый экран — Пополнение */
+  screenTopup(){
+    const start = 1000;
     return `
       <div class="card">
-        <h3>Контроль сделок</h3>
-        ${disputes.length
-          ? disputes.map(o=>`
-              <div class="row" style="margin:8px 0">
-                <div class="chip">#${o.id.slice(0,5)}</div>
-                <button class="btn secondary" onclick="App.resolve('${o.id}','release')">Release</button>
-                <button class="btn secondary" onclick="App.resolve('${o.id}','refund')">Refund</button>
-              </div>
-            `).join('')
-          : '<div class="meta">Споров нет</div>'}
+        <h3>Пополнение MJT</h3>
+        <div class="meta">Выбери сумму ползунком или введи вручную.</div>
+        <label>Сумма (MJT)</label>
+        <input id="topupAmount" type="number" min="100" max="1000000" step="100" value="${start}" oninput="document.getElementById('topupRange').value=this.value"/>
+        <label>Ползунок</label>
+        <input id="topupRange" type="range" min="100" max="100000" step="100" value="${start}" oninput="document.getElementById('topupAmount').value=this.value"/>
+        <div class="toolbar" style="margin-top:8px">
+          <button class="btn" onclick="App.doTopup()">Пополнить</button>
+          <button class="btn secondary" onclick="App.route('settings')">Отмена</button>
+        </div>
       </div>
     `;
   },
@@ -353,18 +360,22 @@ const App = {
     }, 2000);
   },
 
+  doTopup(){
+    const el = document.getElementById('topupAmount');
+    const amt = Math.max(100, parseInt(el.value,10) || 0);
+    this.data.wallet.balance += amt;
+    Store.save(this.data);
+    this.toast(`+${amt} MJT`);
+    this.notify(`Баланс пополнен на ${amt} MJT`);
+    this.route('settings');
+  },
+
   resolve(orderId,decision){
     const o = this.data.orders.find(x=>x.id===orderId);
     if(!o) return;
     o.status = decision==='release' ? 'completed' : 'refunded';
     Store.save(this.data);
     this.toast(`Решение: ${decision}`);
-  },
-
-  fakeTopup(){
-    this.data.wallet.balance += 1000;
-    Store.save(this.data);
-    this.toast('+1000 MJT'); this.notify('Баланс пополнен: +1000 MJT');
   },
 
   async notify(text){
@@ -378,7 +389,7 @@ const App = {
   render(){
     const raw = (location.hash||'#home').replace('#','');
     const [name,param] = raw.split(':');
-    const known = ['home','trade','sell','order','settings','moderation'];
+    const known = ['home','trade','sell','order','settings','moderation','topup'];
     if(!known.includes(name)){ this.route('home'); return; }
 
     this.setActiveTab(name);
@@ -389,12 +400,13 @@ const App = {
     else if(name==='order') el.innerHTML = this.screenOrder(param);
     else if(name==='settings') el.innerHTML = this.screenSettings();
     else if(name==='moderation') el.innerHTML = this.screenModeration();
+    else if(name==='topup') el.innerHTML = this.screenTopup();
   }
 };
 
 window.addEventListener('hashchange', ()=>App.render());
 window.addEventListener('load', ()=>{
-  if(!location.hash) location.hash='home';      // всегда стартуем с Главной
+  if(!location.hash) location.hash='home';
   try{ const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand(); tg?.MainButton?.hide(); }catch(e){}
   App.initUserFromTelegram();
   App.render();
