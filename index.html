@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -12,160 +12,240 @@
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial}
+    body{
+      margin:0;background:var(--bg);color:var(--text);
+      font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial;
+    }
     .app{min-height:100vh;display:flex;flex-direction:column}
-    .container{max-width:980px;margin:0 auto;padding:16px 16px 84px}
-    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-    .hero{background:linear-gradient(180deg,#111117, #0C0C10);border:1px solid var(--line);border-radius:18px;padding:18px;margin:10px 0}
-    .hero h2{margin:0 0 6px 0}
+    .container{max-width:980px;margin:0 auto;padding:16px 16px 104px}
+
+    /* ===== look & feel ===== */
+    .hero{
+      background:
+        radial-gradient(140% 140% at 20% 0%, rgba(233,62,143,.25) 0%, rgba(233,62,143,.07) 38%, rgba(17,17,23,1) 62%),
+        linear-gradient(180deg,#14141b 0%, #0f0f14 100%);
+      border:1px solid var(--line); border-radius:22px; padding:18px; margin:8px 0 12px;
+    }
+    .title{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .badge{
+      width:34px;height:34px;border-radius:11px;background:#1b1b22;
+      display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent)
+    }
+    .balance{display:flex;align-items:baseline;gap:10px;margin:10px 0 12px}
+    .amount{font-size:30px;font-weight:800;letter-spacing:.2px}
+    .sub{color:var(--muted);font-size:13px}
+
+    .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+    .tile{
+      display:flex;flex-direction:column;align-items:center;gap:8px;
+      background:#111117;border:1px solid var(--line);border-radius:16px;padding:12px;cursor:pointer;user-select:none
+    }
+    .tile i,.icoBox,.tabbar .icoBox{
+      display:flex;align-items:center;justify-content:center;
+      background:#1b1b22;border-radius:12px
+    }
+    .tile i{width:40px;height:40px}
+    .icoBox{width:42px;height:42px}
+    .tabbar .icoBox{width:30px;height:30px;border-radius:10px}
+    .tile i b,.icoBox b,.tabbar .icoBox b{color:var(--accent);font-size:20px;font-weight:800;line-height:1}
+    .tile span{font-size:12px}
+
+    .row{display:flex;flex-wrap:wrap;gap:10px}
     .chip{border:1px solid var(--line);border-radius:12px;padding:6px 10px;color:var(--muted);font-size:13px}
-    .btn{background:var(--accent);border:0;color:#fff;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
-    .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+    .btn{background:var(--accent);border:0;color:#fff;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid var(--line);color:#fff}
     .btn.secondary{background:#1a1a21;border:1px solid var(--line);color:#fff}
-    .btn.sm{padding:8px 12px;font-weight:600}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
-    .card h4{margin:0 0 6px}
-    .meta{color:var(--muted);font-size:13px;margin:4px 0 10px}
+    .card{background:#111117;border:1px solid var(--line);border-radius:18px;padding:14px}
+    .card h3,.card h4{margin:0 0 8px}
+    .meta{color:var(--muted);font-size:13px;margin:2px 0 10px}
     .price{color:var(--accent);font-weight:800}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-    input,select,textarea{width:100%;background:#0f0f14;color:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+
+    input,select,textarea{
+      width:100%;background:#0f0f14;color:#fff;border:1px solid var(--line);
+      border-radius:12px;padding:12px
+    }
     label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
-    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
-    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;padding:8px 12px}
-    .pill .ic{font-size:18px}
-    .bignum{font-size:24px;font-weight:800}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:#15151d;border:1px solid var(--line);padding:10px 14px;border-radius:10px;display:none;z-index:20}
-    .tabbar{position:fixed;left:0;right:0;bottom:0;background:#0B0B0F;border-top:1px solid var(--line);display:flex}
-    .tabbar button{flex:1;background:transparent;border:0;color:#CFCFDE;padding:10px 6px;font-weight:700;font-size:14px}
-    .tabbar button .t{display:block;font-size:12px;font-weight:600;opacity:.9}
-    .tabbar button.active{color:#fff;border-top:2px solid var(--accent)}
-    .icon{font-size:20px}
-    .range-wrap{padding:12px;border:1px solid var(--line);border-radius:14px;background:#0f0f14}
-    .range{width:100%;-webkit-appearance:none;height:8px;border-radius:6px;background:#2a2a33;outline:none}
-    .range::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);border:2px solid #fff;cursor:pointer}
+
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+    .product{background:#0f0f14;border:1px solid var(--line);border-radius:16px;padding:14px}
+    .product h4{margin:0 0 6px}
+
+    /* ===== tabbar (minimal) ===== */
+    .tabbar{
+      position:fixed;left:0;right:0;bottom:0;background:#0B0B0F;
+      border-top:1px solid var(--line);display:flex;padding:8px 6px
+    }
+    .tabbar .item{
+      flex:1;background:transparent;border:0;color:#CFCFDE;
+      display:flex;flex-direction:column;align-items:center;gap:6px;
+      padding:8px 4px 12px;font-weight:800
+    }
+    .tabbar .item .lbl{font-size:12px}
+    .tabbar .item.active{color:#fff;border-top:2px solid var(--accent)}
+
+    /* ===== range (pink) ===== */
+    input[type=range]{-webkit-appearance:none;width:100%;background:transparent}
+    input[type=range]::-webkit-slider-runnable-track{
+      height:6px;background:#2B2B33;border-radius:4px
+    }
+    input[type=range]::-webkit-slider-thumb{
+      -webkit-appearance:none;height:22px;width:22px;background:var(--accent);
+      border-radius:50%;margin-top:-8px;cursor:pointer;border:0
+    }
+    input[type=range]:focus::-webkit-slider-runnable-track{background:#3A3A44}
+    /* Firefox */
+    input[type=range]::-moz-range-track{height:6px;background:#2B2B33;border-radius:4px}
+    input[type=range]::-moz-range-thumb{height:20px;width:20px;background:var(--accent);border-radius:50%;border:0}
+
+    /* toast */
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:104px;background:#15151d;border:1px solid var(--line);padding:10px 14px;border-radius:10px;display:none;z-index:20}
     a.link{color:var(--accent);text-decoration:none}
-    .muted{color:var(--muted)}
   </style>
 </head>
 <body>
 <div class="app">
-  <div class="container">
-    <div id="screen"></div>
-  </div>
+  <div class="container"><div id="screen"></div></div>
 
+  <!-- Minimal tabbar -->
   <div class="tabbar">
-    <button id="tab-home"     onclick="App.route('home')">🏠<span class='t'>Главная</span></button>
-    <button id="tab-trade"    onclick="App.route('trade')">🛒<span class='t'>Торговля</span></button>
-    <button id="tab-settings" onclick="App.route('settings')">⚙️<span class='t'>Настройки</span></button>
-    <button id="tab-mod"      onclick="App.route('moderation')">🛡️<span class='t'>Модерация</span></button>
+    <button class="tab item" data-tab="home" onclick="App.route('home')">
+      <span class="icoBox"><b>⌂</b></span><span class="lbl">Главная</span>
+    </button>
+    <button class="tab item" data-tab="trade" onclick="App.route('trade')">
+      <span class="icoBox"><b>↗</b></span><span class="lbl">Торговля</span>
+    </button>
+    <button class="tab item" data-tab="settings" onclick="App.route('settings')">
+      <span class="icoBox"><b>⚙︎</b></span><span class="lbl">Настройки</span>
+    </button>
+    <button class="tab item" id="tab-mod" data-tab="moderation" onclick="App.route('moderation')">
+      <span class="icoBox"><b>🛡</b></span><span class="lbl">Модерация</span>
+    </button>
   </div>
 </div>
 
 <div id="toast" class="toast"></div>
 
 <script>
-const MJT_RUB = 2;   // 1 MJT = 2₽
-const FEE = 0.03;    // 3% комиссия
-
-const API = {
-  async call(path, method='GET', body){
-    const r = await fetch(path, {
-      method,
-      headers:{ 'Content-Type':'application/json' },
-      body: body ? JSON.stringify(body) : undefined
-    });
-    return r.json();
-  }
-};
-
+/* ================== DATA STORE ================== */
 const Store = {
-  key: 'majmarket-state',
-  load(){
-    try{ const raw = localStorage.getItem(this.key); if(!raw) return this.seed(); return JSON.parse(raw); }
-    catch(e){ return this.seed(); }
-  },
+  key:'majmarket-state',
+  load(){ try{const raw=localStorage.getItem(this.key); if(!raw) return this.seed(); return JSON.parse(raw);}catch(e){return this.seed()} },
   seed(){
-    return { user:{}, role:'user', wallet:{ balance:1000, hold:0, history:[] }, orders_cache:[] };
+    return {
+      user:{}, role:'user',
+      wallet:{ balance:100000, hold:0, history:[] },
+      listings:[
+        { id:uid(), seller:123, title:'Футболка Majestic',    price_mjt:1500, category:'Одежда',    server:'RU1', status:'active', created_at:Date.now() },
+        { id:uid(), seller:123, title:'Кастом скин (услуга)', price_mjt:3200, category:'Услуги',    server:'RU2', status:'active', created_at:Date.now()-100000 },
+        { id:uid(), seller:123, title:'Номер А777АА',         price_mjt:8000, category:'Транспорт', server:'RU1', status:'active', created_at:Date.now()-200000 }
+      ],
+      orders:[]
+    }
   },
-  save(data){ localStorage.setItem(this.key, JSON.stringify(data)); }
+  save(d){ localStorage.setItem(this.key, JSON.stringify(d)); }
 };
-
 function uid(){ return Math.random().toString(36).slice(2) }
-function fmtRub(val){ return new Intl.NumberFormat('ru-RU').format(val) + '₽'; }
 
+/* ================== APP ================== */
 const App = {
   data: Store.load(),
-  botUsername: 'majmarket_bot',
+  botUsername: 'MajMarketBot',
 
-  route(name, param){
-    location.hash = name + (param?':'+param:'');
-    this.render();
-  },
-  toast(msg){
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.style.display='block';
-    setTimeout(()=>t.style.display='none', 1600);
-  },
+  route(name,param){ location.hash = name + (param?':'+param:''); this.render(); },
+  toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',1500); },
+
   setActiveTab(name){
-    ['home','trade','settings','moderation'].forEach(n=>{
-      const el = document.getElementById('tab-'+n);
-      if(el) el.classList.toggle('active', n===name);
+    document.querySelectorAll('.tabbar .item').forEach(el=>{
+      el.classList.toggle('active', el.dataset.tab===name);
     });
     const mod = document.getElementById('tab-mod');
-    if(mod) mod.style.display = (this.data.role==='moderator'?'block':'none');
+    if(mod) mod.style.display = (this.data.role==='moderator'?'flex':'none');
   },
+
+  openModerators(){
+    try{
+      const url = "https://t.me/majmarket_bot";
+      if(window.Telegram?.WebApp?.openTelegramLink) window.Telegram.WebApp.openTelegramLink(url);
+      else window.open(url, "_blank", "noopener");
+    }catch(e){ window.open("https://t.me/majmarket_bot","_blank","noopener"); }
+  },
+
   initUserFromTelegram(){
     try{
       const tg = window.Telegram?.WebApp;
-      tg?.ready(); tg?.expand();
+      tg?.ready(); tg?.expand(); tg?.MainButton?.hide();
       const u = tg?.initDataUnsafe?.user;
       if(u){
-        this.data.user = { id: u.id, username: u.username || u.first_name || ('user'+u.id) };
+        this.data.user = { id:u.id, username:u.username||u.first_name||('user'+u.id) };
+        // seed-продавца 123 подменяем на текущего, чтобы можно тестить
+        this.data.listings.forEach(l=>{ if(l.seller===123 || !l.seller) l.seller=this.data.user.id; });
         Store.save(this.data);
-        // регистрация на сервере
-        API.call('/api/register','POST',{
-          telegram_id: this.data.user.id,
-          username: this.data.user.username
-        }).catch(()=>{});
       }
     }catch(e){}
   },
 
-  // ---------- Screens ----------
+  /* ========== NOTIFY HELPERS ========== */
+  async notify(text){ // текущему пользователю
+    try{
+      const chat_id = this.data.user.id;
+      if(!chat_id) return;
+      await fetch('/api/notify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id,text})});
+    }catch(e){}
+  },
+  async notifyTo(chat_id,text){ // кому-то ещё (продавцу/покупателю)
+    try{
+      if(!chat_id) return;
+      await fetch('/api/notify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id,text})});
+    }catch(e){}
+  },
+
+  /* ================== SCREENS ================== */
   screenHome(){
     const w = this.data.wallet;
+    const u = this.data.user.username || 'Гость';
+    const recent = this.data.orders.slice(-8).reverse().map(o=>{
+      const l = this.data.listings.find(x=>x.id===o.listing_id);
+      return `<div class="chip">#${o.id.slice(0,5)} · ${l?.title||'Лот'} · <b>${o.status}</b></div>`;
+    }).join('') || '<span class="chip">пока нет заказов</span>';
+
     return `
       <div class="hero">
-        <div class="row" style="justify-content:space-between">
-          <h2>Привет, ${this.data.user.username||'Гость'}</h2>
-          <span class="chip">Курс: 1 MJT = ${MJT_RUB}₽ • Комиссия ${Math.round(FEE*100)}%</span>
+        <div class="title">
+          <div class="badge">M</div>
+          <div>
+            <div style="font-weight:800">MajMarket</div>
+            <div class="meta">Привет, ${u} 👋</div>
+          </div>
         </div>
-        <div class="row" style="margin:10px 0 12px">
-          <div class="pill"><span class="ic">💳</span><div>Баланс<br><span class="bignum">${w.balance} MJT</span> <span class="muted">≈ ${fmtRub(w.balance*MJT_RUB)}</span></div></div>
-          <div class="pill"><span class="ic">🔒</span><div>В удержании<br><span class="bignum">${w.hold} MJT</span> <span class="muted">≈ ${fmtRub(w.hold*MJT_RUB)}</span></div></div>
+
+        <div class="balance">
+          <div class="amount">${w.balance} MJT</div>
+          <div class="sub">в удержании: ${w.hold}</div>
         </div>
-        <div class="row">
-          <button class="btn" onclick="App.route('topup')">➕ Пополнить</button>
-          <button class="btn ghost" onclick="App.route('trade')">🛒 К каталогу</button>
+
+        <div class="actions">
+          <div class="tile" onclick="App.route('topup')"><i><b>＋</b></i><span>Пополнить</span></div>
+          <div class="tile" onclick="App.route('trade')"><i><b>↓</b></i><span>Покупка</span></div>
+          <div class="tile" onclick="App.route('sell')"><i><b>↑</b></i><span>Продажа</span></div>
         </div>
       </div>
 
-      <div class="card" style="margin-top:12px">
-        <h4>Советы по безопасности</h4>
-        <div class="meta">Не переводите вне платформы. Всегда подтверждайте получение после реальной передачи товара. В споре помогают скриншоты/видео.</div>
+      <div class="card">
+        <h4>Последние покупки / продажи</h4>
+        <div class="row" style="margin-top:6px">${recent}</div>
       </div>
     `;
   },
 
-  async screenTrade(){
-    const resp = await API.call('/api/listings');
-    const list = resp.ok ? resp.data : [];
+  screenTrade(){
+    const list = this.data.listings
+      .filter(x=>x.status==='active')
+      .sort((a,b)=>b.created_at-a.created_at);
+
     return `
       <div class="card">
-        <div class="row" style="justify-content:space-between;align-items:center">
-          <h3>Торговля</h3>
-          <button class="btn sm" onclick="App.route('sell')">+ Выставить</button>
-        </div>
+        <h3>Торговля</h3>
         <div class="toolbar">
           <input id="q" placeholder="Поиск по названию…"/>
           <select id="cat">
@@ -176,16 +256,19 @@ const App = {
           </select>
           <select id="srv"><option value="">Сервер</option><option>RU1</option><option>RU2</option><option>RU3</option></select>
           <button class="btn secondary" onclick="App.render()">Фильтровать</button>
+          <button class="btn" onclick="App.route('sell')">+ Выставить на продажу</button>
         </div>
       </div>
+
       <div class="grid" style="margin-top:12px">
         ${list.map(l=>`
-          <div class="card product">
+          <div class="product">
             <h4>${l.title}</h4>
             <div class="meta">${l.category} • ${l.server}</div>
-            <div class="price">${l.price_mjt} MJT <span class="muted">≈ ${fmtRub(l.price_mjt*MJT_RUB)}</span></div>
+            <div class="price">${l.price_mjt} MJT</div>
             <div class="toolbar">
               <button class="btn" onclick="App.route('order','${l.id}')">Купить</button>
+              <button class="btn ghost" onclick="App.toast('В избранное: скоро')">В избранное</button>
             </div>
           </div>
         `).join('')}
@@ -203,41 +286,39 @@ const App = {
         <label>Сервер *</label>
           <select id="s"><option>RU1</option><option>RU2</option><option>RU3</option></select>
         <label>Цена (MJT) *</label><input id="p" type="number" min="1" placeholder="1000"/>
-        <div class="meta">≈ в рублях будет показано в карточке: курс 1 MJT = ${MJT_RUB}₽</div>
-        <div class="toolbar"><button class="btn" onclick="App.createListing()">Опубликовать</button>
-          <button class="btn secondary" onclick="App.route('trade')">Отмена</button></div>
+        <div class="toolbar"><button class="btn" onclick="App.createListing()">Опубликовать</button></div>
       </div>
     `;
   },
 
-  async screenOrder(listingId){
-    // подгрузим лоты и найдём нужный
-    const resp = await API.call('/api/listings');
-    const list = resp.ok ? resp.data : [];
-    const l = list.find(x=>x.id===listingId);
-    if(!l) return '<div class="card">Лот не найден</div>';
+  /** Экран сделки — МЕХАНИКА: подтверждает только ПОКУПАТЕЛЬ, продавец ничего не жмёт; самопокупка запрещена */
+  screenOrder(listingId){
+    const l = this.data.listings.find(x=>x.id===listingId);
+    if(!l) return `<div class="card">Лот не найден</div>`;
 
     const me = this.data.user.id;
-    const isMine = String(l.seller_id) === String(me);
+    const isSelf = String(l.seller) === String(me);
 
-    // Ищем активный заказ текущего пользователя из кэша (визуализация для кнопки подтверждения)
-    const o = this.data.orders_cache.find(x=>x.listing_id===listingId && x.buyer_id===me && x.status!=='completed');
+    // найдём активный заказ для текущего пользователя (если он покупатель)
+    const o = this.data.orders.slice().reverse().find(o =>
+      o.listing_id===l.id && o.buyer_id===me && !['completed','refunded'].includes(o.status)
+    );
 
     const actions = [];
-    if (isMine) {
+    if (isSelf) {
       actions.push(`<span class="chip">Это ваш лот — купить нельзя</span>`);
       actions.push(`<button class="btn secondary" onclick="App.route('trade')">Назад</button>`);
-    } else if(!o){
-      const fee = Math.round(l.price_mjt*FEE);
+    } else if (!o) {
       actions.push(`<button class="btn" onclick="App.hold('${l.id}')">Заблокировать ${l.price_mjt} MJT</button>`);
-      actions.push(`<span class="chip">Комиссия: ${fee} MJT (${fmtRub(fee*MJT_RUB)})</span>`);
     } else {
-      // модель "как Юла": подтверждает только покупатель
+      // модель «как Юла»: подтверждает только покупатель
       if(o.status==='holded' && !o.buyer_confirm){
         actions.push(`<button class="btn" onclick="App.confirmReceived('${o.id}')">Я получил товар</button>`);
-        actions.push(`<button class="btn secondary" onclick="App.toast('Открыт спор (MVP)')">Открыть спор</button>`);
+        actions.push(`<button class="btn secondary" onclick="App.dispute('${o.id}')">Открыть спор</button>`);
       } else if (o.status==='completed'){
         actions.push(`<span class="chip">Сделка завершена ✅</span>`);
+      } else if (o.status==='dispute'){
+        actions.push(`<span class="chip">Спор у модераторов</span>`);
       }
     }
 
@@ -245,12 +326,16 @@ const App = {
       <div class="card">
         <h3>${l.title}</h3>
         <div class="meta">${l.category} • ${l.server}</div>
-        <div class="price" style="margin:8px 0">${l.price_mjt} MJT <span class="muted">≈ ${fmtRub(l.price_mjt*MJT_RUB)}</span></div>
+        <div class="price" style="margin:8px 0">${l.price_mjt} MJT</div>
         <div class="toolbar" style="margin-top:10px">${actions.join(' ')}</div>
       </div>
+
       <div class="card" style="margin-top:12px">
-        <b>Как это работает?</b>
-        <div class="meta">Эскроу удерживает сумму → Получили товар → Жмите «Я получил товар» → Выплата продавцу (комиссия 3%).</div>
+        <b>Статус сделки:</b>
+        <div class="meta">${
+          o ? `${o.status}${o.buyer_confirm?' • buyer✔':''}` : (isSelf?'ваш лот':'не начата')
+        }</div>
+        <div class="meta">Эскроу удерживает средства → Покупатель подтверждает получение → Выплата продавцу (комиссия 3%). Спор — модераторы.</div>
       </div>
     `;
   },
@@ -259,145 +344,208 @@ const App = {
     const w = this.data.wallet;
     return `
       <div class="hero">
-        <h2>Настройки</h2>
-        <div class="row" style="margin:8px 0 12px">
+        <div class="title">
+          <div class="badge">⚙︎</div><div style="font-weight:800">Настройки</div>
+        </div>
+        <div class="row" style="margin:6px 0 10px">
           <div class="chip">Баланс: <b>${w.balance}</b> MJT</div>
           <div class="chip">В удержании: <b>${w.hold}</b> MJT</div>
         </div>
-        <div class="row">
-          <button class="btn" onclick="App.route('topup')">➕ Пополнить</button>
-          <a class="btn ghost" href="https://t.me/${App.botUsername}?start=support" target="_blank" rel="noopener">Связь с модерацией</a>
+        <div class="actions" style="grid-template-columns:repeat(3,1fr)">
+          <div class="tile" onclick="App.route('topup')"><i><b>＋</b></i><span>Пополнить</span></div>
+          <div class="tile" onclick="App.openModerators()"><i><b>…</b></i><span>Модераторы</span></div>
+          <div class="tile" onclick="App.toast('KYC скоро')"><i><b>ID</b></i><span>Верификация</span></div>
         </div>
       </div>
 
       <div class="card">
-        <h4>Недавние действия</h4>
-        <div class="meta">${(w.history.slice(-6).reverse().map(h=>`${h.kind} · ${h.amount} MJT`).join(' · ')) || 'пока пусто'}</div>
+        <h4>Недавние заказы</h4>
+        <div class="meta">${this.data.orders.slice(-5).reverse().map(o=>`#${o.id.slice(0,5)} · ${o.status}`).join(' · ') || 'пока пусто'}</div>
       </div>
-    `;
-  },
-
-  screenTopup(){
-    return `
-      <div class="card">
-        <h3>Пополнение баланса</h3>
-        <div class="range-wrap">
-          <input id="topupRange" class="range" type="range" min="50" max="5000" step="50" value="500"
-                 oninput="document.getElementById('topupVal').innerText=this.value"/>
-          <div class="row" style="justify-content:space-between;margin-top:6px">
-            <div>Сумма: <b id="topupVal">500</b> MJT</div>
-            <div class="muted">≈ <span id="topupRub">${fmtRub(500*MJT_RUB)}</span></div>
-          </div>
-        </div>
-        <div class="toolbar">
-          <button class="btn" onclick="App.fakeTopup()">Пополнить</button>
-          <button class="btn secondary" onclick="App.route('settings')">Назад</button>
-        </div>
-        <div class="meta">MVP: пополнение демо (без ончейн/эквайринга).</div>
-      </div>
-      <script>
-        const rng = document.getElementById('topupRange');
-        const rub = document.getElementById('topupRub');
-        rng?.addEventListener('input', ()=>{ rub.textContent = new Intl.NumberFormat('ru-RU').format(rng.value*${MJT_RUB})+'₽'; });
-      </script>
     `;
   },
 
   screenModeration(){
     if(this.data.role!=='moderator') return `<div class="card">Доступ только модераторам</div>`;
+    const open = this.data.orders.filter(o=>o.status==='dispute').slice(-20).reverse();
     return `
-      <div class="card"><h3>Контроль сделок</h3>
-        <div class="meta">MVP: споры будут отображаться здесь.</div>
+      <div class="card">
+        <h3>Контроль сделок</h3>
+        ${open.length ? open.map(o=>`
+          <div class="row" style="margin:8px 0">
+            <div class="chip">#${o.id.slice(0,5)}</div>
+            <button class="btn secondary" onclick="App.modResolve('${o.id}','release')">Release</button>
+            <button class="btn secondary" onclick="App.modResolve('${o.id}','refund')">Refund</button>
+          </div>
+        `).join('') : '<div class="meta">Споров нет</div>'}
       </div>
     `;
   },
 
-  // ---------- Actions ----------
-  async createListing(){
+  screenTopup(){
+    const start = 1000;
+    return `
+      <div class="card">
+        <h3>Пополнение MJT</h3>
+        <div class="meta">Выбери сумму ползунком или введи вручную.</div>
+        <label>Сумма (MJT)</label>
+        <input id="topupAmount" type="number" min="100" max="1000000" step="100" value="${start}" oninput="document.getElementById('topupRange').value=this.value"/>
+        <label>Ползунок</label>
+        <input id="topupRange" type="range" min="100" max="100000" step="100" value="${start}" oninput="document.getElementById('topupAmount').value=this.value"/>
+        <div class="toolbar" style="margin-top:8px">
+          <button class="btn" onclick="App.doTopup()">Пополнить</button>
+          <button class="btn secondary" onclick="App.route('settings')">Отмена</button>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ================== ACTIONS (обновлена механика) ================== */
+
+  createListing(){
     const t = document.getElementById('t').value.trim();
     const c = document.getElementById('c').value;
     const s = document.getElementById('s').value;
     const p = parseInt(document.getElementById('p').value,10)||0;
     if(!t || !p){ this.toast('Заполни название и цену'); return; }
-    const seller_id = this.data.user.id;
-    const resp = await API.call('/api/listings','POST',{ seller_id, title:t, price_mjt:p, category:c, server:s });
-    if(!resp.ok){ this.toast('Ошибка публикации'); return; }
-    this.toast('Опубликовано');
+    const l = { id:uid(), seller:this.data.user.id||'me', title:t, price_mjt:p, category:c, server:s, status:'active', created_at:Date.now() };
+    this.data.listings.unshift(l);
+    Store.save(this.data);
+    this.toast('Объявление опубликовано');
     this.route('trade');
   },
 
+  /** Покупатель начинает сделку: самопокупка запрещена; продавец НИЧЕГО не подтверждает */
   async hold(listingId){
-    const buyer_id = this.data.user.id;
-    const resp = await API.call('/api/orders','POST',{ listing_id: listingId, buyer_id });
-    if(!resp.ok){ this.toast(resp.error || 'Ошибка создания заказа'); return; }
-    // сохраним в локальный кэш для отображения кнопки подтверждения
-    this.data.orders_cache.push({ id: resp.data.id, listing_id, buyer_id, status:'holded', buyer_confirm:false });
+    const l = this.data.listings.find(x=>x.id===listingId);
+    const w = this.data.wallet;
+    if(!l) return;
+
+    // запрет самопокупки
+    if (String(l.seller) === String(this.data.user.id||'me')) {
+      this.toast('Нельзя купить свой лот');
+      return;
+    }
+
+    if(w.balance < l.price_mjt){ this.toast('Недостаточно MJT'); return; }
+
+    const order = {
+      id: uid(),
+      listing_id: l.id,
+      buyer_id: this.data.user.id||'me',
+      seller_id: l.seller,
+      price: l.price_mjt,
+      status: 'holded',
+      buyer_confirm: false,
+      created_at: Date.now()
+    };
+
+    // эскроу
+    w.balance -= l.price_mjt; w.hold += l.price_mjt;
+    w.history.push({kind:'hold', amount:l.price_mjt, ts:Date.now(), order_id:order.id});
+    this.data.orders.push(order);
     Store.save(this.data);
-    this.toast('Удержано (эскроу)');
-    this.route('order', listingId);
+
+    // нотификации
+    this.toast(`Удержано ${l.price_mjt} MJT`);
+    this.notify(`Удержано ${l.price_mjt} MJT по заказу #${order.id.slice(0,5)}. Подтвердите получение после передачи.`);
+    this.notifyTo(order.seller_id, `Новый заказ #${order.id.slice(0,5)} на «${l.title}» за ${l.price_mjt} MJT. Ожидайте подтверждение покупателя.`);
+
+    this.route('order', l.id);
   },
 
-  async confirmReceived(orderId){
-    const resp = await API.call('/api/orders','PATCH',{ order_id: orderId });
-    if(!resp.ok){ this.toast('Ошибка подтверждения'); return; }
-    // обновим локальный кэш
-    const o = this.data.orders_cache.find(x=>x.id===orderId);
-    if(o){ o.status='completed'; o.buyer_confirm=true; Store.save(this.data); }
+  /** Модель «как Юла»: подтверждает только ПОКУПАТЕЛЬ — сразу завершаем сделку и делаем выплату */
+  confirmReceived(orderId){
+    const o = this.data.orders.find(x=>x.id===orderId);
+    if(!o) return;
+    if(o.status!=='holded'){ this.toast('Неверный статус'); return; }
+
+    o.buyer_confirm = true;
+    // релиз средств
+    const w = this.data.wallet;
+    const fee = Math.round(o.price * 0.03);
+    o.status = 'completed';
+    w.hold -= o.price;
+    w.history.push({kind:'release', amount:o.price - fee, ts:Date.now(), order_id:o.id});
+    w.history.push({kind:'fee', amount:fee, ts:Date.now(), order_id:o.id});
+    Store.save(this.data);
+
     this.toast('Сделка завершена ✅');
+    this.notify('Спасибо! Вы подтвердили получение. Сделка завершена.');
+    this.notifyTo(o.seller_id, `Заказ #${o.id.slice(0,5)} завершён. Выплата: ${o.price - fee} MJT (комиссия ${fee}).`);
+
     this.route('home');
   },
 
-  fakeTopup(){
-    const rng = document.getElementById('topupRange');
-    const amount = parseInt(rng?.value||'500',10);
-    this.data.wallet.balance += amount;
+  /** Открыть спор */
+  dispute(orderId){
+    const o = this.data.orders.find(x=>x.id===orderId);
+    if(!o) return;
+    o.status = 'dispute';
     Store.save(this.data);
-    this.toast(`+${amount} MJT`);
+    this.toast('Открыт спор — модераторы уведомлены');
+    this.notifyTo(o.seller_id, `По заказу #${o.id.slice(0,5)} открыт спор.`);
+    this.notify('Мы сообщили модераторам. Ожидайте связи.');
   },
 
-  async notify(text){
-    try{
-      const chat_id = this.data.user.id;
-      if(!chat_id) return;
-      await API.call('/api/notify','POST',{ chat_id, text });
-    }catch(e){}
+  /** Модератор решает спор */
+  modResolve(orderId, decision){
+    const o = this.data.orders.find(x=>x.id===orderId);
+    if(!o) return;
+    const w = this.data.wallet;
+    if(decision==='release'){
+      const fee = Math.round(o.price*0.03);
+      o.status='completed';
+      w.hold -= o.price;
+      w.history.push({kind:'release', amount:o.price-fee, ts:Date.now(), order_id:o.id});
+      w.history.push({kind:'fee', amount:fee, ts:Date.now(), order_id:o.id});
+      this.notifyTo(o.seller_id, `Модерация: Release по #${o.id.slice(0,5)}.`);
+      this.notifyTo(o.buyer_id,  `Модерация: Release по #${o.id.slice(0,5)}.`);
+    }else{
+      o.status='refunded';
+      w.hold -= o.price;
+      w.balance += o.price;
+      w.history.push({kind:'refund', amount:o.price, ts:Date.now(), order_id:o.id});
+      this.notifyTo(o.seller_id, `Модерация: Refund по #${o.id.slice(0,5)}.`);
+      this.notifyTo(o.buyer_id,  `Модерация: Refund по #${o.id.slice(0,5)}.`);
+    }
+    Store.save(this.data);
+    this.toast(`Решение: ${decision}`);
+    this.render();
   },
 
-  async render(){
+  doTopup(){
+    const el = document.getElementById('topupAmount');
+    const amt = Math.max(100, parseInt(el.value,10) || 0);
+    this.data.wallet.balance += amt;
+    Store.save(this.data);
+    this.toast(`+${amt} MJT`);
+    this.notify(`Баланс пополнен на ${amt} MJT`);
+    this.route('settings');
+  },
+
+  render(){
     const raw = (location.hash||'#home').replace('#','');
     const [name,param] = raw.split(':');
+    const known = ['home','trade','sell','order','settings','moderation','topup'];
+    if(!known.includes(name)){ this.route('home'); return; }
+
     this.setActiveTab(name);
     const el = document.getElementById('screen');
-
-    // если не из Telegram — попросим открыть через бота
-    if (!this.data.user.id) {
-      const tg = window.Telegram?.WebApp;
-      const u = tg?.initDataUnsafe?.user;
-      if (!u) {
-        el.innerHTML = \`
-        <div class="card">
-          <h3>Открой через бота</h3>
-          <div class="meta">Перейди в @\${this.botUsername} и нажми «Открыть MajMarket»</div>
-          <div class="toolbar"><a class="btn" href="https://t.me/\${this.botUsername}" target="_blank" rel="noopener">Открыть бота</a></div>
-        </div>\`;
-        return;
-      }
-    }
-
     if(name==='home') el.innerHTML = this.screenHome();
-    else if(name==='trade') el.innerHTML = await this.screenTrade();
+    else if(name==='trade') el.innerHTML = this.screenTrade();
     else if(name==='sell') el.innerHTML = this.screenSell();
-    else if(name==='order') el.innerHTML = await this.screenOrder(param);
+    else if(name==='order') el.innerHTML = this.screenOrder(param);
     else if(name==='settings') el.innerHTML = this.screenSettings();
     else if(name==='moderation') el.innerHTML = this.screenModeration();
     else if(name==='topup') el.innerHTML = this.screenTopup();
-    else el.innerHTML = '<div class="card">Нет такой страницы</div>';
   }
 };
 
 window.addEventListener('hashchange', ()=>App.render());
 window.addEventListener('load', ()=>{
-  try{ const tg = window.Telegram?.WebApp; tg?.ready(); tg?.expand(); tg?.MainButton?.hide(); }catch(e){}
+  if(!location.hash) location.hash='home';
+  try{ const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand(); tg?.MainButton?.hide(); }catch(e){}
   App.initUserFromTelegram();
   App.render();
 });
